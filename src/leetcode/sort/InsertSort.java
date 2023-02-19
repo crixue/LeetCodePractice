@@ -22,6 +22,7 @@ public class InsertSort {
     public static void insertSort(int[] nums) {
         int len = nums.length;
 
+        //第一个元素是有序的，不排序
         for (int i = 1; i < len; i++) {
             for (int j = i; j > 0 ; j--) {
                 if(nums[j] < nums[j-1]) {
