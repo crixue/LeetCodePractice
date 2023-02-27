@@ -166,13 +166,12 @@ public class Test {
     }
 
     public static void main(String[] args) {
-        TreeSet<String> worsSet = new TreeSet<>((o1, o2) -> {return o2.length()-o1.length();});
-        StringBuilder sb = new StringBuilder("abc");
-        sb.deleteCharAt(sb.length()-1);
-
-        LinkedHashMap linkedHashMap = new LinkedHashMap();
-
-        System.out.println(sb.toString());
+        String a = "a";
+        String b = new String("a");
+        String a1 = "aa";
+        String b1 = new String("a") + new String("a");
+        System.out.println(a == b);
+        System.out.println(a1 == b1);
     }
 
 }
