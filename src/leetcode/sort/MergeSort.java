@@ -1,5 +1,10 @@
 package leetcode.sort;
 
+/**
+ * https://suanfa8.com/merge-sort/basic-thought
+ * 先拆分 在组合
+ */
+
 public class MergeSort {
 
     public static int[] mergeSortArr(int[] nums) {

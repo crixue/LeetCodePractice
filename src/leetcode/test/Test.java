@@ -1,177 +1,144 @@
 package leetcode.test;
 
-import java.util.*;
+import java.util.Random;
 
 public class Test {
 
-    private static final int MAX_NUM = 9;
-
-    private static boolean followRules(char[][] board, int r, int c, char val) {
-
-        for(int i=0; i<MAX_NUM; i++) {
-            if(i != c && board[r][i] == val) return false;
-            if(i != r && board[i][c] == val) return false;
-            if(board[(r/3)*3+i/3][(c/3)*3+i%3] == val) {
-                return false;
-            }
-        }
-        return true;
+    private void swap(int[] nums, int a, int b) {
+        int temp = nums[a];
+        nums[a] = nums[b];
+        nums[b] = temp;
     }
 
-    private static boolean fillSudoku(char[][] board, int r, int c) {
-        //base case
-        if(r == MAX_NUM-1 && c == MAX_NUM) return true;
-        if(c == MAX_NUM) {
-            r += 1;
-            c = 0;
-            return fillSudoku(board, r, c);
+    public void quickSort(int[] nums) {
+        int len = nums.length;
+
+        quickSort(nums, 0, len-1);
+    }
+
+    private void quickSort(int[] nums, int left, int right) {
+        if(left >= right) {
+            return;
         }
-        if(board[r][c] != '.') return fillSudoku(board, r, c+1);
+
+        int rand = left + new Random(System.currentTimeMillis()).nextInt(right - left + 1);
+        swap(nums, rand, left);
+        int pivot = nums[left];
+
+        // lt < pivot, eqs == pivot, gt > pivot
+        //[left+1, lt] [lt+1, i) [gt, right]
+        int lt = left, gt = right + 1, i = left + 1;
+        while (i < gt) {
+            if(nums[i] < pivot) {
+                lt++;
+                swap(nums, lt, i);
+                i++;
+            } else if (nums[i] == pivot) {
+                i++;
+            } else {
+                gt--;
+                swap(nums, gt, i);
+            }
+        }
+        swap(nums, lt, left);
+
+        quickSort(nums, left, lt-1);
+        quickSort(nums, gt, right);
+    }
 
 
-        for(char i='1'; i<='9'; i++) {
-            if(followRules(board, r, c, i)) {
-                board[r][c] = i;
-                if(fillSudoku(board, r, c+1)) {
-                    return true;
+    public void selectSort(int[] nums) {
+        int len = nums.length;
+
+        for (int i = 0; i < len - 1; i++) {
+            int minimum = i;
+            for (int j = i + 1; j < len; j++) {
+                if(nums[j] < nums[minimum]) {
+                    minimum = j;
                 }
-                board[r][c] = '.';
+            }
+            swap(nums, minimum, i);
+        }
+    }
+    public void insertSort(int[] nums) {
+        int len = nums.length;
+
+        for (int i = 1; i < len; i++) {
+            int temp = nums[i];
+            for (int j = i-1; j >= 0; j--) {
+                if(nums[j] > temp) {
+                    swap(nums, j, j+1);
+                } else {
+                    break;
+                }
             }
         }
-        return false;
     }
 
-    public static boolean isValidSudoku(char[][] board) {
-        return fillSudoku(board, 0, 0);
+    public void bubbleSort(int[] nums) {
+        boolean sorted = true;
+        for (int i = 0; i < nums.length-1; i++) {
+            for (int j = 1; j < nums.length - i; j++) {
+                if(nums[j-1] > nums[j]) {
+                    swap(nums, j-1, j);
+                    sorted = false;
+                }
+            }
+            if (sorted) {
+                break;
+            }
+        }
     }
 
-
-    private static int res = 0;
-
-    private static void backtrace(int m, int n, int[] cur, boolean[][] visited) {
-        //base case
-        if(cur[0] == m-1 && cur[1] == n-1) {
-            res += 1;
+    private void mergeSort(int[] nums, int left, int right, int[] temp) {
+        if(left >= right) {
             return;
         }
 
-        int[][] dirs = new int[][]{{0,1},{1,0}};
-        for(int i=0; i<2; i++) {
-            int[] dir = dirs[i];
-            int row = cur[0] + dir[0], col = cur[1] + dir[1];
-            if(row<0 || row>=m || col<0 || col>=n || visited[row][col]) continue;
-            visited[row][col] = true;
-            backtrace(m, n, new int[]{row, col}, visited);
-            visited[row][col] = false;
-
-        }
-
-    }
-
-    public static int uniquePaths(int m, int n) {
-        backtrace(m, n, new int[]{0,0}, new boolean[m][n]);
-
-        return res;
-    }
-
-    public static int climbStairs(int n) {
-        int[] dp = new int[n+1];
-        dp[0] = 0;
-        dp[1] = 1;
-        dp[2] = 2;
-        if(n <= 2) return dp[n];
-        for(int i=3; i<=n; i++) {
-            dp[i] = dp[i-1] + dp[i-2];
-        }
-        return dp[n];
-    }
-
-    private static List<List<Integer>> res1 = new ArrayList<>();
-
-    private static void backtrace(int[] nums, int start, LinkedList<Integer> item) {
-        //base case
-        res1.add(new LinkedList<>(item));
-        if(start == nums.length) return;
-
-        for(int i=start; i<nums.length; i++) {
-            item.add(nums[i]);
-            backtrace(nums, i+1, item);
-            item.removeLast();
-        }
-    }
-
-    public static List<List<Integer>> subsets(int[] nums) {
-        backtrace(nums, 0, new LinkedList<Integer>());
-        return res1;
-    }
-
-    public static int largestRectangleArea(int[] heights) {
-        if (heights.length == 0) return 0;
-        if(heights.length == 1) return heights[0];
-
-        int[] newHeis = new int[heights.length+2];
-        newHeis[0] = 0;
-        System.arraycopy(heights, 0, newHeis, 1, heights.length);
-        newHeis[heights.length+1] = 0;
-
-        int maxArea = 0;
-        Deque<Integer> stk = new ArrayDeque<>();
-        stk.addLast(0);
-        for (int i = 1; i < newHeis.length; i++) {
-            while (newHeis[i] < newHeis[stk.peekLast()]) {
-                int curHeight = newHeis[stk.pollLast()];
-                int curWeight = i - stk.peekLast() - 1;
-                maxArea = Math.max(maxArea, curHeight*curWeight);
-            }
-            stk.add(i);
-        }
-
-        return maxArea;
-    }
-
-    private static boolean isValidNum(String numStr) {
-        if(numStr.length() == 0) return false;
-        if(numStr.charAt(0) == '0') return false;
-        return Integer.valueOf(numStr) <= 26 && Integer.valueOf(numStr) >= 0;
-    }
-
-    private static int res2 = 0;
-
-    private static void backtrace(String s, int index, String lastNum) {
-        int sz = s.length();
-        //base case
-        if(index == sz) {
-            res += 1;
+        int mid = (right - left) /2 + left;
+        mergeSort(nums, left, mid, temp);
+        mergeSort(nums, mid+1, right, temp);
+        if(nums[mid] <= nums[mid+1]) {
             return;
         }
 
-        String curNumStr = s.substring(index, index+1);
-        String merged = lastNum + curNumStr;
-        if(!curNumStr.equals(merged) && isValidNum(merged)) {
-            backtrace(s, index+1, merged);
+        for (int i = left; i <= right; i++) {
+            temp[i] = nums[i];
         }
 
-        if(isValidNum(curNumStr)) {
-            backtrace(s, index+1, curNumStr);
+        for(int i=left, j=mid+1, k=left; k <= right; k++) {
+            if(i > mid) {
+                nums[k] = temp[j];
+                j++;
+            } else if (j > right) {
+                nums[k] = temp[i];
+                i++;
+            } else if (temp[i] <= temp[j]) {
+                nums[k] = temp[i];
+                i++;
+            } else {
+                nums[k] = temp[j];
+                j++;
+            }
         }
+
     }
 
-    public static int numDecodings(String s) {
-        if(s.length() == 0) return 0;
-        if(s.charAt(0) == '0') return 0;
-        if(s.length() == 1) return 1;
-
-        backtrace(s, 0, "");
-        return res;
+    public void mergeSort(int[] nums) {
+        int len = nums.length;
+        int[] temp = new int[len];
+        mergeSort(nums, 0, len-1, temp);
     }
 
     public static void main(String[] args) {
-        String a = "a";
-        String b = new String("a");
-        String a1 = "aa";
-        String b1 = new String("a") + new String("a");
-        System.out.println(a == b);
-        System.out.println(a1 == b1);
+        Test test = new Test();
+        int[] arr = {8, 7, 6, 5, 4, 3, 2, 1};
+        int[] arr1 = {4, 7, 8, 6, 5, 1, 2, 3};
+        test.selectSort(arr1);
+        for (int i :
+                arr1) {
+            System.out.println(i);
+        }
     }
 
 }
