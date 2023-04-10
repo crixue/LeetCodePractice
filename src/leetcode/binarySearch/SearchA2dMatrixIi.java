@@ -12,8 +12,8 @@ public class SearchA2dMatrixIi {
 
 
         while (i >= 0 || j >= 0) {
-            int col = j < 0 ? 0 : j;
-            int row = i < 0 ? 0 : i;
+            int col = Math.max(j, 0);
+            int row = Math.max(i, 0);
 
             if(matrix[row][col] < target) {
                 return false;
